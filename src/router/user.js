@@ -1,5 +1,6 @@
 const koaRouter = require('@koa/router')
 const connection = require('../app/database')
+const md5Password = require('../utils/md5-password')
 
 const userRouter = new koaRouter({ prefix: '/users' })
 
@@ -27,6 +28,9 @@ userRouter.post('/register', async (ctx, next) => {
         }
         return
     }
+
+    //! 对用户密码进行加密处理
+    password = md5Password(ctx.request.body.password)
     
     //?2、拼接statement
     const statement = 'INSERT INTO `user` (name, password) VALUES (?, ?);'
