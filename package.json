@@ -1,0 +1,26 @@
+{
+  "name": "node-project",
+  "version": "1.0.0",
+  "description": "A simple Node project implemented using koa framework and other technology stacks.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xglbrilliant/Node-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Xglbrilliant/Node-project/issues"
+  },
+  "homepage": "https://github.com/Xglbrilliant/Node-project#readme",
+  "dependencies": {
+    "@koa/router": "^12.0.1",
+    "dotenv": "^16.3.1",
+    "koa": "^2.15.0",
+    "koa-bodyparser": "^4.4.1"
+  }
+}
