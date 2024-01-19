@@ -30,13 +30,13 @@ userRouter.post('/register', async (ctx, next) => {
     }
 
     //! 对用户密码进行加密处理
-    password = md5Password(ctx.request.body.password)
+    const pwd = md5Password(password)
     
     //?2、拼接statement
     const statement = 'INSERT INTO `user` (name, password) VALUES (?, ?);'
 
     // ? 3、执行sql语句
-    let [result] = await connection.execute(statement, [name, password])//异步操作
+    let [result] = await connection.execute(statement, [name, pwd])//异步操作
 
     ctx.body = {
         message: '注册成功~',
