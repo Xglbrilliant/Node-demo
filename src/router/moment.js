@@ -2,6 +2,7 @@ const koa = require('koa')
 const koaRouter = require('@koa/router')
 const { verifyAuth } = require('../middleware/verifyLoginAuth')
 const connection = require('../app/database')
+const verifyCommentPermission = require('../middleware/verifyComment')
 
 const app = new koa()
 
@@ -54,6 +55,20 @@ commentRouter.get('/list/:commentId', async (ctx, next) => {
         data: result[0]
     }
 })
-
+// todo: 修改某条动态详情接口——改
+//!需要验证登陆用户的id是否与发表动态的用户id相同，相同才可以修改，否则不能修改
+commentRouter.patch('/list/:commentId', verifyAuth, verifyCommentPermission, async(ctx, next) => {
+    const { commentId } = ctx.params
+    const { content } = ctx.request.body
+    const statement = 'UPDATE comment SET content = ? WHERE id = ?'
+    const [result] = await connection.execute(statement, [content, commentId])
+    console.log(result);
+    ctx.body = { 
+        code: 0,
+        message: '修改动态成功~',
+        data: result
+    }
+})
+// todo: 查看具体某条动态详情接口——删
 
 module.exports = commentRouter
