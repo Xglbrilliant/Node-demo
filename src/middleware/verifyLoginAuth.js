@@ -30,6 +30,7 @@ const verifyAuth = (ctx, next) => {
             message: 'token无效或已过期!'
         }
     }
+    next()
 }
 
 module.exports = {
