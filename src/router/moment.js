@@ -69,6 +69,17 @@ commentRouter.patch('/list/:commentId', verifyAuth, verifyCommentPermission, asy
         data: result
     }
 })
-// todo: 查看具体某条动态详情接口——删
+// todo: 删除某条动态接口——删
+commentRouter.delete('/list/:commentId', verifyAuth, verifyCommentPermission, async(ctx, next) => {
+    const { commentId } = ctx.params
+    const statement = 'DELETE FROM comment WHERE id = ?'
+    const [result] = await connection.execute(statement, [commentId])
+    console.log(result);
+    ctx.body = { 
+        code: 0,
+        message: '删除动态成功~',
+        data: result
+    }
+})
 
 module.exports = commentRouter
