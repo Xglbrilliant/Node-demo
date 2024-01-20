@@ -16,9 +16,8 @@ const verifyAuth = (ctx, next) => {
         const result = jwt.verify(token, PUBLIC_KEY, {
             algorithms: ['RS256']
         })
-        console.log(result)
-        // console.log(ctx.users);
-        // ctx.users = result
+        // console.log(result)
+        ctx.users = result//传递用户数据便于其他中间件使用
         ctx.body = {
             code: 0,
             message: 'token有效,可以进入!'
