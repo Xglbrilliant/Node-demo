@@ -4,6 +4,13 @@ const { PUBLIC_KEY } = require('../config/screct')
 const verifyAuth = (ctx, next) => {
     // 获取token
     const authorization = ctx.headers.authorization
+    console.log(authorization);
+    if(!authorization) {
+        return ctx.body = {
+            code: -1005,
+            message: 'token无效或已过期!'
+        }
+    }
     const token = authorization.replace('Bearer ', '')
     try {//! 使用公钥解密验证token是否有效
         const result = jwt.verify(token, PUBLIC_KEY, {
