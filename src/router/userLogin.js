@@ -50,7 +50,8 @@ loginRouter.post('/', async (ctx, next) => {
 })
 loginRouter.post('/list', verifyAuth)
 
-module.exports = {
-    loginRouter
-}
+// module.exports = {
+//     loginRouter
+// }
+module.exports = loginRouter
 

@@ -46,6 +46,7 @@ userRouter.post('/register', async (ctx, next) => {
     return result
 })
 
-module.exports = {
-    userRouter
-}
+// module.exports = {
+//     userRouter
+// }
+module.exports = userRouter
