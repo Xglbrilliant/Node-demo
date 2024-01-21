@@ -9,5 +9,6 @@ dotenv.config()//?通过第三方库dotenv中的config方法来加载.env文件�
 // }
 
 module.exports = {
-    SERVER_PORT
+    SERVER_PORT,
+    SERVER_HOST
 } = process.env
