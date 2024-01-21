@@ -33,9 +33,11 @@ commentRouter.get('/list', async (ctx, next) => {
     // const statement = 'SELECT * FROM comment;'//? 查询全部数据
     // const [result] = await connection.execute(statement)
     // const statement = 'SELECT * FROM comment LIMIT ? OFFSET ?;'//? 按条数和分页查询数据
+    //?再次使用子查询，在展示动态列表时展示每条动态的标签个数
     const statement = `SELECT m.id, m.content content, m.craeteAt craeteTime, m.updateAt updateTime,
     JSON_OBJECT('id', u.id, 'name', u.name, 'createTime', u.craeteAt, 'updateTime', u.updateAt) user,
-    (SELECT COUNT(*) FROM moment WHERE moment.comment_id = m.id) momentCount FROM
+    (SELECT COUNT(*) FROM moment WHERE moment.comment_id = m.id) momentCount,
+    (SELECT COUNT(*) FROM comment_label cl WHERE cl.comment_id = m.id) labelCount FROM
     comment m LEFT JOIN user u ON u.id = m.user_id LIMIT ? OFFSET ?;`//多表查询和子查询，查看动态时显示用户信息和评论个数
     const [result] = await connection.execute(statement, [String(size), String(offset)])//这里的参数不支持数字类型
     console.log(result.length);
@@ -47,12 +49,14 @@ commentRouter.get('/list', async (ctx, next) => {
 // todo: 查看某条动态详情接口——查
 commentRouter.get('/list/:commentId', async (ctx, next) => {
     const { commentId } = ctx.params
+    //?再次使用子查询，在展示某条动态详情时展示具体的所有标签
     const statement = `SELECT m.id, m.content content, m.craeteAt craeteTime, m.updateAt updateTime,
     JSON_OBJECT('id', u.id, 'name', u.name, 'createTime', u.craeteAt, 'updateTime', u.updateAt) user,
-    (JSON_ARRAYAGG(JSON_OBJECT('id', c.id, 'content', c.content, 'momentId', c.moment_id, 
-    'user', JSON_OBJECT('id', cu.id, 'name', cu.name)))) moments FROM
-    comment m LEFT JOIN user u ON u.id = m.user_id LEFT JOIN moment c ON c.moment_id = m.id
-    LEFT JOIN user cu ON cu.id = c.user_id WHERE m.id = ? GROUP BY m.id;`
+    (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', c.id, 'content', c.content, 'momentId', c.moment_id, 
+    'user', JSON_OBJECT('id', cu.id, 'name', cu.name))) FROM moment c LEFT JOIN user cu ON c.user_id = cu.id
+    WHERE c.comment_id = m.id) moments, (JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name))) labels FROM
+    comment m LEFT JOIN user u ON u.id = m.user_id LEFT JOIN comment_label cl ON cl.comment_id = m.id
+    LEFT JOIN label l ON cl.label_id = l.id WHERE m.id = ? GROUP BY m.id;`
     const [result] = await connection.execute(statement, [commentId])
     console.log(result[0]);
     ctx.body = { 
