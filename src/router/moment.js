@@ -33,8 +33,9 @@ commentRouter.get('/list', async (ctx, next) => {
     // const [result] = await connection.execute(statement)
     // const statement = 'SELECT * FROM comment LIMIT ? OFFSET ?;'//? 按条数和分页查询数据
     const statement = `SELECT m.id, m.content content, m.craeteAt craeteTime, m.updateAt updateTime,
-    JSON_OBJECT('id', u.id, 'name', u.name, 'createTime', u.craeteAt, 'updateTime', u.updateAt) user FROM
-    comment m LEFT JOIN user u ON u.id = m.user_id LIMIT ? OFFSET ?;`//多表查询，查看动态时显示用户信息
+    JSON_OBJECT('id', u.id, 'name', u.name, 'createTime', u.craeteAt, 'updateTime', u.updateAt) user,
+    (SELECT COUNT(*) FROM moment WHERE moment.comment_id = m.id) momentCount FROM
+    comment m LEFT JOIN user u ON u.id = m.user_id LIMIT ? OFFSET ?;`//多表查询和子查询，查看动态时显示用户信息和评论个数
     const [result] = await connection.execute(statement, [String(size), String(offset)])//这里的参数不支持数字类型
     console.log(result.length);
     ctx.body = { 
