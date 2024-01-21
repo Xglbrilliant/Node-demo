@@ -3,6 +3,7 @@ const koaRouter = require('@koa/router')
 const { verifyAuth } = require('../middleware/verifyLoginAuth')
 const connection = require('../app/database')
 const verifyCommentPermission = require('../middleware/verifyComment')
+const verifyLabelExists = require('../middleware/verifyLabel')
 
 const app = new koa()
 
@@ -57,6 +58,33 @@ commentRouter.get('/list/:commentId', async (ctx, next) => {
     ctx.body = { 
         code: 0,
         data: result[0]
+    }
+})
+// todo: 给动态添加标签
+commentRouter.post('/:commentId/labels', verifyAuth, verifyCommentPermission, verifyLabelExists, async(ctx, next) => {
+    const { commentId } = ctx.params
+    const labels = ctx.labels
+    // console.log(labels);
+    try {
+        for (const label of labels)  {
+            // !!查询数据库中是否存在commentId和label.id的关系数据
+            const statement = 'SELECT * FROM comment_label WHERE comment_id = ? AND label_id = ?;'
+            const [result] = await connection.execute(statement, [commentId, label.id])
+            // console.log('result', result.length);
+            if(!result.length) {
+                const statement = 'INSERT INTO comment_label (comment_id, label_id) VALUES (?, ?);'
+                const [result] = await connection.execute(statement, [commentId, label.id])
+            }
+        }
+        ctx.body = { 
+            code: 0,
+            message: '动态添加标签成功~'
+        }
+    } catch (err) {
+        ctx.body = { 
+            code: -2001,
+            message: '动态添加标签失败~',
+        }
     }
 })
 // todo: 修改某条动态详情接口——改
