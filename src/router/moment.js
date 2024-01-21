@@ -47,8 +47,11 @@ commentRouter.get('/list', async (ctx, next) => {
 commentRouter.get('/list/:commentId', async (ctx, next) => {
     const { commentId } = ctx.params
     const statement = `SELECT m.id, m.content content, m.craeteAt craeteTime, m.updateAt updateTime,
-    JSON_OBJECT('id', u.id, 'name', u.name, 'createTime', u.craeteAt, 'updateTime', u.updateAt) user FROM
-    comment m LEFT JOIN user u ON u.id = m.user_id WHERE m.id = ?;`
+    JSON_OBJECT('id', u.id, 'name', u.name, 'createTime', u.craeteAt, 'updateTime', u.updateAt) user,
+    (JSON_ARRAYAGG(JSON_OBJECT('id', c.id, 'content', c.content, 'momentId', c.moment_id, 
+    'user', JSON_OBJECT('id', cu.id, 'name', cu.name)))) moments FROM
+    comment m LEFT JOIN user u ON u.id = m.user_id LEFT JOIN moment c ON c.moment_id = m.id
+    LEFT JOIN user cu ON cu.id = c.user_id WHERE m.id = ? GROUP BY m.id;`
     const [result] = await connection.execute(statement, [commentId])
     console.log(result[0]);
     ctx.body = { 
