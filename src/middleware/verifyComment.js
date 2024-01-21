@@ -12,7 +12,7 @@ const verifyCommentPermission = async(ctx, next) => {
             message: '没有权限，无法修改这条动态~'
         }
     } else {
-        next()
+       await next()
     }
 }
 

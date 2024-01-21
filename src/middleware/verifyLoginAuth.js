@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken')
 const { PUBLIC_KEY } = require('../config/screct')
 
-const verifyAuth = (ctx, next) => {
+const verifyAuth = async (ctx, next) => {
     // 获取token
     const authorization = ctx.headers.authorization
-    console.log(authorization);
+    // console.log(authorization);
     if(!authorization) {
         return ctx.body = {
             code: -1005,
@@ -29,7 +29,7 @@ const verifyAuth = (ctx, next) => {
             message: 'token无效或已过期!'
         }
     }
-    next()
+    await next()
 }
 
 module.exports = {
