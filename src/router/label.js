@@ -16,5 +16,16 @@ labelRouter.get('/', async (ctx, next) => {
         data: result
     }
 })
+//? 获取标签列表
+labelRouter.get('/list', async (ctx, next) => {
+    const statement = 'SELECT * FROM label;'
+    const [result] = await connection.execute(statement)
+    // console.log(result);
+    ctx.body = {
+        code: 0,
+        message: '查看标签列表成功~',
+        data: result
+    }
+})
 
 module.exports = labelRouter
