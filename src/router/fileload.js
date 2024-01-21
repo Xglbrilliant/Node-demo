@@ -4,6 +4,7 @@ const { verifyAuth } = require('../middleware/verifyLoginAuth')
 const connection = require('../app/database')
 const UPLOAD_PATH = require('../config/filePath')
 const fs = require('fs')
+const { SERVER_PORT, SERVER_HOST } = require('../config/server')
 
 const uploadAvatar = multer({
     dest: UPLOAD_PATH
@@ -19,11 +20,16 @@ fileRouter.post('/avatar', verifyAuth, uploadAvatar.single('avatar'), async (ctx
     const statement = 'INSERT INTO avatar (filename, mimetype, size, user_id) VALUES (?, ?, ?, ?);'
     const [result] = await connection.execute(statement, [filename, mimetype, size, id])
     console.log(result);
+    // 将头像信息保存到用户表中
+    const statement1 = 'UPDATE user SET avatar_url = ? WHERE id = ?;'
+    const avatarUrl = `${SERVER_HOST}:${SERVER_PORT}/users/avatar/${id}`
+    const [result1] = await connection.execute(statement1, [avatarUrl, id])
+    console.log(result1);
 
     ctx.body = {
         code: 0,
         message: '文件上传成功',
-        data: result
+        data: avatarUrl
     }
 })
 // 查看头像信息
