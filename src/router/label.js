@@ -3,7 +3,7 @@ const connection = require('../app/database');
 
 const labelRouter = new koaRouter({ prefix: '/labels' })
 
-labelRouter.get('/', async (ctx, next) => {
+labelRouter.post('/', async (ctx, next) => {
     const { name } = ctx.request.body
     // console.log(name);
     const statement = 'INSERT INTO label (name) VALUES (?);'
