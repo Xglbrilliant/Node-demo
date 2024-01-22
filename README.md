@@ -3,8 +3,16 @@ A simple Node project implemented using koa framework and other technology stack
 
 ## Getting started
 ```js
+git clone git@github.com:Xglbrilliant/Node-demo.git && cd Node-demo
 # install dependency
 npm install
+
+cd src/config/keys
+openssl
+# Generate private key
+genrsa -out private.key 2048
+# Generate public key using private key
+rsa -in private.key -pubout -out public.key
 
 npm run start
 ```
